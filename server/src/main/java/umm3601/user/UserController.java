@@ -11,6 +11,7 @@ public class UserController {
 
   private UserDatabase database;
 
+
   /**
    * Construct a controller for users.
    * <p>
@@ -19,10 +20,12 @@ public class UserController {
    * requests.
    *
    * @param database the `Database` containing user data
+   * @param database1
    */
   public UserController(UserDatabase database) {
     this.database = database;
   }
+
 
   /**
    * Get the single user specified by the `id` parameter in the request.

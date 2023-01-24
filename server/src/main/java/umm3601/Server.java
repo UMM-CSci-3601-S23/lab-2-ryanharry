@@ -42,6 +42,7 @@ public class Server {
 
     // Get specific user
     server.get("/api/users/{id}", userController::getUser);
+    server.get("/api//{id}", userController::getUser);
 
     // List users, filtered using query parameters
     server.get("/api/users", userController::getUsers);
