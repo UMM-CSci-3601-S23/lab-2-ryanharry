@@ -7,8 +7,8 @@ import io.javalin.plugin.bundled.RouteOverviewPlugin;
 import io.javalin.http.staticfiles.Location;
 import umm3601.user.UserDatabase;
 import umm3601.user.UserController;
-import umm3601.todo.TodoController;
 import umm3601.todo.TodoDatabase;
+import umm3601.todo.TodoController;
 
 public class Server {
 
@@ -16,6 +16,9 @@ public class Server {
   public static final String CLIENT_DIRECTORY = "../client";
   public static final String USER_DATA_FILE = "/users.json";
   private static UserDatabase userDatabase;
+
+  public static final String TODO_DATA_FILE = "/todos.json";
+  private static TodoDatabase todoDatabase;
 
   public static void main(String[] args) {
 
@@ -45,12 +48,18 @@ public class Server {
 
     // Get specific user
     server.get("/api/users/{id}", userController::getUser);
-    server.get("/api//{id}", userController::getUser);
+
+    // Get specific todo
+    server.get("/api/todos/{id}", todoController::getTodo);
 
     // List users, filtered using query parameters
     server.get("/api/users", userController::getUsers);
     server.get("/api/todos", todoController::getTodos);
   }
+
+ // private static TodoController buildTodoController() {
+ //   return null;
+ // }
 
   /***
    * Create a database using the json file, use it as data source for a new
@@ -60,14 +69,16 @@ public class Server {
    * reading from the JSON "database" file. If that happens we'll print out an
    * error message exit the program.
    */
+
+
   private static TodoController buildTodoController() {
-    UserController TodoController = null;
+    TodoController todoController = null;
     try {
 
       todoDatabase = new TodoDatabase(TODO_DATA_FILE);
-      TodoController = new TodoController(todoDatabase);
+      todoController = new TodoController(todoDatabase);
     } catch (IOException e) {
-      System.err.println("The server failed to load the user data; shutting down.");
+      System.err.println("The server failed to load the todo data; shutting down.");
       e.printStackTrace(System.err);
 
       // Exit from the Java program
@@ -75,6 +86,8 @@ public class Server {
     }
 
     return todoController;}
+
+
 
   private static UserController buildUserController() {
     UserController userController = null;
