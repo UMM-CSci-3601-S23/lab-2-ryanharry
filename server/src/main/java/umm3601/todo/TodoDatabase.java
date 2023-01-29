@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.javalin.http.BadRequestResponse;
+//import io.javalin.http.BadRequestResponse;
 
 /**
  * A fake "database" of user info
@@ -59,22 +59,27 @@ public class TodoDatabase {
       } catch (NumberFormatException e) {
         throw new BadRequestResponse("Specified age '" + ageParam + "' can't be parsed to an integer");
       }
-      */
+    */
 
     // Filter company if defined
     if (queryParams.containsKey("owner")) {
       String targetOwner = queryParams.get("owner").get(0);
       filteredTodos = filterTodosByOwner(filteredTodos, targetOwner);
     }
+
     // Process other query parameters here...
     if (queryParams.containsKey("category")){
       String targetCategory = queryParams.get("category").get(0);
+      filteredTodos = filterTodosByCategory(filteredTodos, targetCategory);
     }
+
     if (queryParams.containsKey("body")){
       String targetBody = queryParams.get("body").get(0);
     }
+
     if (queryParams.containsKey("status")){
       String targetStatus= queryParams.get("status").get(0);
+      filteredTodos = filterTodosByStatus(filteredTodos, targetStatus);
     }
     return filteredTodos;}
 
@@ -88,7 +93,7 @@ public class TodoDatabase {
    *         age
    */
   public Todo[] filterTodosByOwner(Todo[] todos, String targetOwner) {
-    return Arrays.stream(todos).filter(x -> x.owner == targetOwner).toArray(Todo[]::new);
+    return Arrays.stream(todos).filter(x -> x.owner.equals(targetOwner)).toArray(Todo[]::new);
   }
 
   /**
@@ -99,28 +104,19 @@ public class TodoDatabase {
    * @return an array of all the users from the given list that have the target
    *         company
    */
-  public Todo[] filterTodosByCategory(Todo[] todos, String targetCategory) {
+  public Todo[] filterTodosByCategory(Todo[] todos, String targetCategory){
     return Arrays.stream(todos).filter(x -> x.category.equals(targetCategory)).toArray(Todo[]::new);
   }
-
- /**
-   * Get an array of all the users having the target company.
-   *
-   * @param todos         the list of users to filter by company
-   * @param targetCategory  the target company to look for
-   * @return an array of all the users from the given list that have the target
-   *         company
-   */
-  /*public Todo[] completeOrIncompleteStatus(Todo[] todos, String targetStatus){
-    if (status="complete"){
-      return Arrays.stream(todos).filter(x -> x.status.equals(targetStatus)).toArray(Todo[]::new);
+  public Todo[] filterTodosByStatus(Todo[] todos, String targetStatus){
+    if(targetStatus.equals("incomplete")){
+      return Arrays.stream(todos).filter(x -> x.status == false).toArray(Todo[]::new);
     }
     else{
-      return Arrays.stream(todos).filter(x -> x.status.equals(targetStatus)).toArray(Todo[]::new);
+      return Arrays.stream(todos).filter(x -> x.status == true).toArray(Todo[]::new);
     }
-
-  }*/
+  }
 }
+//}
 
 
 

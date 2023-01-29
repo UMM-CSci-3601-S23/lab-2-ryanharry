@@ -1,7 +1,4 @@
 package umm3601.todo;
-
-
-
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
@@ -33,12 +30,12 @@ public class TodoController {
    *
    * @param ctx a Javalin HTTP context
    */
-  public void getTodo(Context ctx) {
-    String id = ctx.pathParam("id");
+  public void getTodo(Context ctx1) {
+    String id = ctx1.pathParam("id");
     Todo todo = database.getTodo(id);
     if (todo != null) {
-      ctx.json(todo);
-      ctx.status(HttpStatus.OK);
+      ctx1.json(todo);
+      ctx1.status(HttpStatus.OK);
     } else {
       throw new NotFoundResponse("No todo with id " + id + " was found.");
     }
@@ -49,9 +46,9 @@ public class TodoController {
    *
    * @param ctx a Javalin HTTP context
    */
-  public void getTodos(Context ctx) {
-    Todo[] todos = database.listTodos(ctx.queryParamMap());
-    ctx.json(todos);
+  public void getTodos(Context ctx1) {
+    Todo[] todos = database.listTodos(ctx1.queryParamMap());
+    ctx1.json(todos);
   }
 
 }
