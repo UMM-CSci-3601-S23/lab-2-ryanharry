@@ -24,16 +24,13 @@ import java.util.stream.Stream;
 
 public class TodoDatabase {
 
+  public Todo getTodo(String id) {
+    return Arrays.stream(allTodo).filter(x -> x._id.equals(id)).findFirst().orElse(null);
+  }
 
   public static Todo[] limiting_fun(Todo[] todos, int range){
     return Arrays.stream(todos).limit(range).toArray(Todo[]::new);
   }
-
-
-  /*public static Todo[] FilterByContains(Todo[] todos, String content){
-    return Arrays.stream(todos).limit(range).toArray(Todo[]::new);
-  }*/
-
 
   private Todo[] allTodo;
 
@@ -51,12 +48,9 @@ public class TodoDatabase {
    * Get the single user specified by the given ID. Return `null` if there is no
    * user with that ID.
    *
-   * @param id the ID of the desired user
-   * @return the user with the given ID, or null if there is no user with that ID
+   * @param content the ID of the desired user
+   * @return the user with the given content
    */
-  public Todo getTodo(String id) {
-    return Arrays.stream(allTodo).filter(x -> x._id.equals(id)).findFirst().orElse(null);
-  }
 
   /**
    * Get an array of all the users satisfying the queries in the params.
@@ -90,7 +84,8 @@ public class TodoDatabase {
     }
 
     if (queryParams.containsKey("contains")){
-      String targetBody = queryParams.get("contains").get(0);
+      String targetContains = queryParams.get("contains").get(0);
+      filteredTodos = filterTodosByContains(filteredTodos, targetContains);
     }
 
     if (queryParams.containsKey("status")){
@@ -155,13 +150,14 @@ public class TodoDatabase {
   }
 /**
    * Get an array of all the users having the target company.
+ * @param filteredTodos
    *
    * @param todos         the list of users to filter by company
-   * @param targetBody  the target company to look for
+   * @param targetContains  the target company to look for
    * @return an array of all the users from the given list that have the target
    */
-  public Todo[] filterTodosByBody(Todo[] todos, String targetBody){
-    return Arrays.stream(todos).filter(x -> x.category.equals(targetBody)).toArray(Todo[]::new);
+  public Todo[] filterTodosByContains(Todo[] todos, String content) {
+    return Arrays.stream(allTodo).filter(x -> x.body.contains(content)).toArray(Todo[]::new);
   }
 }
 
