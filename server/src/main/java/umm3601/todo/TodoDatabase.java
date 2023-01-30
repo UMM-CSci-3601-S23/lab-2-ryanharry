@@ -1,12 +1,16 @@
 package umm3601.todo;
-
+import java.io.IOException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.javalin.http.BadRequestResponse;
+
+import java.util.stream.Stream;
+
 //import io.javalin.http.BadRequestResponse;
 
 /**
@@ -17,7 +21,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * then provide various database-like methods that allow the `UserController` to
  * "query" the "database".
  */
+
 public class TodoDatabase {
+
+
+  public static Todo[] limiting_fun(Todo[] todos, int range){
+    return Arrays.stream(todos).limit(range).toArray(Todo[]::new);
+  }
+
+
+  /*public static Todo[] FilterByContains(Todo[] todos, String content){
+    return Arrays.stream(todos).limit(range).toArray(Todo[]::new);
+  }*/
+
 
   private Todo[] allTodo;
 
@@ -73,23 +89,36 @@ public class TodoDatabase {
       filteredTodos = filterTodosByCategory(filteredTodos, targetCategory);
     }
 
-    if (queryParams.containsKey("body")){
-      String targetBody = queryParams.get("body").get(0);
+    if (queryParams.containsKey("contains")){
+      String targetBody = queryParams.get("contains").get(0);
     }
 
     if (queryParams.containsKey("status")){
       String targetStatus= queryParams.get("status").get(0);
       filteredTodos = filterTodosByStatus(filteredTodos, targetStatus);
     }
-    return filteredTodos;}
+
+    if (queryParams.containsKey("owner")) {
+      String targetOwner = queryParams.get("owner").get(0);
+      filteredTodos = filterTodosByOwner(filteredTodos, targetOwner);}
+
+    if (queryParams.containsKey("limit")) {
+      String targetResult = queryParams.get("limit").get(0);
+      try {
+        int targetLimit = Integer.parseInt(targetResult);
+        filteredTodos = limiting_fun(filteredTodos, targetLimit);
+      } catch (NumberFormatException e) {
+        throw new BadRequestResponse("Specified limit '" + targetResult+ "' can't be parsed to an integer");
+      }
+
+    }
+    return filteredTodos;
+  }
 
 
   /**
    * Get an array of all the users having the target owner.
-   *
-   * @param todos     the list of users to filter by age
-   * @param targetOwner the target age to look for
-   * @return an array of all the users from the given list that have the target
+   *miting_fiven list that have the target
    *         age
    */
   public Todo[] filterTodosByOwner(Todo[] todos, String targetOwner) {
@@ -107,6 +136,15 @@ public class TodoDatabase {
   public Todo[] filterTodosByCategory(Todo[] todos, String targetCategory){
     return Arrays.stream(todos).filter(x -> x.category.equals(targetCategory)).toArray(Todo[]::new);
   }
+  /**
+   * Get an array of all the users having the target company.
+   *
+   * @param todos         the list of users to filter by company
+   * @param targetStatus  the target company to look for
+   * @return an array of all the users from the given list that have the target
+   */
+
+
   public Todo[] filterTodosByStatus(Todo[] todos, String targetStatus){
     if(targetStatus.equals("incomplete")){
       return Arrays.stream(todos).filter(x -> x.status == false).toArray(Todo[]::new);
@@ -115,7 +153,18 @@ public class TodoDatabase {
       return Arrays.stream(todos).filter(x -> x.status == true).toArray(Todo[]::new);
     }
   }
+/**
+   * Get an array of all the users having the target company.
+   *
+   * @param todos         the list of users to filter by company
+   * @param targetBody  the target company to look for
+   * @return an array of all the users from the given list that have the target
+   */
+  public Todo[] filterTodosByBody(Todo[] todos, String targetBody){
+    return Arrays.stream(todos).filter(x -> x.category.equals(targetBody)).toArray(Todo[]::new);
+  }
 }
+
 
 
 
