@@ -1,7 +1,5 @@
 package umm3601;
-
 import java.io.IOException;
-
 import io.javalin.Javalin;
 import io.javalin.plugin.bundled.RouteOverviewPlugin;
 import io.javalin.http.staticfiles.Location;
@@ -25,9 +23,8 @@ public class Server {
     // Initialize dependencies
     UserController userController = buildUserController();
     TodoController todoController = buildTodoController();
-
     Javalin server = Javalin.create(config -> {
-      // This tells the server where to look for static files,
+      // This tells the server where to look for static files
       // like HTML and JavaScript.
       config.staticFiles.add(CLIENT_DIRECTORY, Location.EXTERNAL);
       // This adds a Javalin plugin that will list all of the
@@ -61,20 +58,9 @@ public class Server {
  //   return null;
  // }
 
-  /***
-   * Create a database using the json file, use it as data source for a new
-   * UserController
-   *
-   * Constructing the controller might throw an IOException if there are problems
-   * reading from the JSON "database" file. If that happens we'll print out an
-   * error message exit the program.
-   */
-
-
   private static TodoController buildTodoController() {
     TodoController todoController = null;
     try {
-
       todoDatabase = new TodoDatabase(TODO_DATA_FILE);
       todoController = new TodoController(todoDatabase);
     } catch (IOException e) {
@@ -84,10 +70,8 @@ public class Server {
       // Exit from the Java program
       System.exit(1);
     }
-
-    return todoController;}
-
-
+    return todoController;
+  }
 
   private static UserController buildUserController() {
     UserController userController = null;

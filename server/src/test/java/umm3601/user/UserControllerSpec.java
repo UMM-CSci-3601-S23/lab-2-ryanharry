@@ -103,8 +103,7 @@ public class UserControllerSpec {
     queryParams.put("age", Arrays.asList(new String[] {"abc"}));
     when(ctx.queryParamMap()).thenReturn(queryParams);
 
-    // This should now throw a `BadRequestResponse` exception because
-    // our request has an age that can't be parsed to a number.
+    // This should now throw a `BadRequestResponse` es
     Throwable exception = Assertions.assertThrows(BadRequestResponse.class, () -> {
       userController.getUsers(ctx);
     });

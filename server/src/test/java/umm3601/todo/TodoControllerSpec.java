@@ -1,0 +1,129 @@
+package umm3601.todo;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
+import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
+import io.javalin.http.NotFoundResponse;
+import umm3601.Server;
+
+/**
+ * Tests the logic of the UserController
+ *
+ * @throws IOException
+ */
+// The tests here include a ton of "magic numbers" (numeric constants).
+// It wasn't clear to me that giving all of them names would actually
+// help things. The fact that it wasn't obvious what to call some
+// of them says a lot. Maybe what this ultimately means is that
+// these tests can/should be restructured so the constants (there are
+// also a lot of "magic strings" that Checkstyle doesn't actually
+// flag as a problem) make more sense.
+@SuppressWarnings({ "MagicNumber" })
+public class TodoControllerSpec {
+  private Context ctx = mock(Context.class);
+  private TodoController todoController;
+  private static TodoDatabase db;
+
+  @BeforeEach
+  public void setUp() throws IOException {
+    db = new TodoDatabase(Server.TODO_DATA_FILE);
+    todoController = new TodoController(db);
+  }
+  @Test
+  public void canGetUsersWithOwner() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("owner", Arrays.asList(new String[] {"Fry"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+
+    // Confirm that all the users passed to `json` work for OHMNET.
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (Todo todo : argument.getValue()) {
+      assertEquals("Fry", todo.owner);
+    }
+  }
+
+
+
+  @Test
+  public void canGetTodosWithStatus() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("status", Arrays.asList(new String[] {"incomplete"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+
+    // Confirm that all the todos passed to `json` work for OHMNET.
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (Todo todo : argument.getValue()) {
+      assertEquals(false, todo.status);
+    }
+  }
+
+/*@Test
+  public void canGetTodoWithSpecifiedContains() throws IOException {
+    TodoDatabase db = new TodoDatabase("/todos.json");
+
+    assertEquals("Ipsum esse est ullamco magna tempor anim laborum non officia deserunt veniam commodo. Aute minim incididunt ex commodo.", todo.name);
+  }*/
+
+
+  @Test
+  public void canGetTodoWithSpecifiedId() throws IOException {
+    String id = "58895985a22c04e761776d54";
+    Todo todo = db.getTodo(id);
+
+    when(ctx.pathParam("id")).thenReturn(id);
+
+    todoController.getTodo(ctx);
+
+    verify(ctx).json(todo);
+    verify(ctx).status(HttpStatus.OK);
+    assertEquals("Blanche", todo.owner);
+  }
+
+  @Test
+  public void respondsAppropriatelyToRequestForNonexistentId() throws IOException {
+    when(ctx.pathParam("id")).thenReturn(null);
+    Throwable exception = Assertions.assertThrows(NotFoundResponse.class, () -> {
+      todoController.getTodo(ctx);
+    });
+    assertEquals("No todo with id " + null + " was found.", exception.getMessage());
+  }
+
+
+@Test
+  public void canGetTodosWithCategory() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("category", Arrays.asList(new String[] {"software design"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+
+    // Confirm that all the todos passed to `json` work for OHMNET.
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (Todo todo : argument.getValue()) {
+      assertEquals("software design", todo.category);
+    }
+  }
+
+}
