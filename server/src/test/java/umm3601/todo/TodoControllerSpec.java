@@ -146,17 +146,17 @@ public class TodoControllerSpec {
     }
   }
 @Test
-  public void FilterByLimiting(){
+  public void filterByLimiting() {
     Map<String, List<String>> queryParams = new HashMap<>();
     queryParams.put("limit", Arrays.asList(new String[] {"qqq"}));
     when(ctx.queryParamMap()).thenReturn(queryParams);
     Throwable exception = Assertions.assertThrows(BadRequestResponse.class, () -> {
       todoController.getTodos(ctx);
     });
-    assertEquals(("Specified limit '" + "qqq"+ "' can't be parsed to an integer"), exception.getMessage());
+    assertEquals(("Specified limit '" + "qqq" + "' can't be parsed to an integer"), exception.getMessage());
 }
 @Test
-public void FilterByContains() throws IOException {
+public void filterByContains() throws IOException {
   Map<String, List<String>> queryParams = new HashMap<>();
   queryParams.put("contains", Arrays.asList(new String[] {"ex"}));
   when(ctx.queryParamMap()).thenReturn(queryParams);
@@ -170,12 +170,55 @@ public void FilterByContains() throws IOException {
   }
 }
 
-public void FilterBySorting(){
+@Test
+public void filterBySortingOwner() {
   Map<String, List<String>> queryParams = new HashMap<>();
   queryParams.put("orderBy", Arrays.asList(new String[] {"owner"}));
   when(ctx.queryParamMap()).thenReturn(queryParams);
   todoController.getTodos(ctx);
   ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+  verify(ctx).json(argument.capture());
+  for (int i = 0; i<argument.getValue().length-1; i++ ){
+    assertTrue(argument.getValue()[i].compareTo(argument.getValue()[i+1])<1);
+  }
+}
+
+  @Test
+  public void filterBySortingCategory() {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("orderBy", Arrays.asList(new String[] {"category"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (int i = 0; i<argument.getValue().length-1; i++ ){
+      assertTrue(argument.getValue()[i].compareTo(argument.getValue()[i+1])<1);
+    }
+  }
+
+@Test
+public void filterBySortingBody() {
+  Map<String, List<String>> queryParams = new HashMap<>();
+  queryParams.put("orderBy", Arrays.asList(new String[] {"body"}));
+  when(ctx.queryParamMap()).thenReturn(queryParams);
+  todoController.getTodos(ctx);
+  ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+  verify(ctx).json(argument.capture());
+  for (int i = 0; i<argument.getValue().length-1; i++ ){
+    assertTrue(argument.getValue()[i].compareTo(argument.getValue()[i+1])<1);
+  }
+}
+  @Test
+  public void filterBySortingStatus() {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("orderBy", Arrays.asList(new String[] {"status"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (int i = 0; i<argument.getValue().length-1; i++ ){
+      assertTrue(argument.getValue()[i].compareTo(argument.getValue()[i+1])<1);
+    }
 
 }
 }

@@ -127,9 +127,9 @@ public class TodoDatabase {
 
   public Todo[] filterTodosByStatus(Todo[] todos, String targetStatus) {
     if (targetStatus.equals("incomplete")) {
-      return Arrays.stream(todos).filter(x -> x.status == false).toArray(Todo[]::new);
+      return Arrays.stream(todos).filter(x -> !x.status).toArray(Todo[]::new);
     } else {
-      return Arrays.stream(todos).filter(x -> x.status == true).toArray(Todo[]::new);
+      return Arrays.stream(todos).filter(x -> x.status).toArray(Todo[]::new);
     }
   }
 /**

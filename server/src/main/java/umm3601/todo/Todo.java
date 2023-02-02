@@ -1,5 +1,5 @@
 package umm3601.todo;
-
+@SuppressWarnings({"VisibilityModifier"})
 public class Todo {
   @SuppressWarnings({"MemberName"})
   public String _id;
@@ -24,6 +24,10 @@ public class Todo {
 
   public String getCategory() {
     return category;
+  }
+
+  public int compareTo(Todo todo) {
+    return 0;
   }
 }
 
