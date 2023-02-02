@@ -1,6 +1,7 @@
 package umm3601.todo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
@@ -44,6 +46,18 @@ public class TodoControllerSpec {
     db = new TodoDatabase(Server.TODO_DATA_FILE);
     todoController = new TodoController(db);
   }
+
+  @Test
+  public void canGetAllUsers() throws IOException {
+    todoController.getTodos(ctx);
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    assertEquals(db.size(), argument.getValue().length);
+  }
+
+
+
+
   @Test
   public void canGetUsersWithOwner() throws IOException {
     Map<String, List<String>> queryParams = new HashMap<>();
@@ -78,12 +92,21 @@ public class TodoControllerSpec {
     }
   }
 
-/*@Test
-  public void canGetTodoWithSpecifiedContains() throws IOException {
-    TodoDatabase db = new TodoDatabase("/todos.json");
+  @Test
+  public void canGetTodosWithStatusTestAnotherResult() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("status", Arrays.asList(new String[] {"complete"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
 
-    assertEquals("Ipsum esse est ullamco magna tempor anim laborum non officia deserunt veniam commodo. Aute minim incididunt ex commodo.", todo.name);
-  }*/
+    todoController.getTodos(ctx);
+
+    // Confirm that all the todos passed to `json` work for OHMNET.
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (Todo todo : argument.getValue()) {
+      assertEquals(true, todo.status);
+    }
+  }
 
 
   @Test
@@ -115,15 +138,44 @@ public class TodoControllerSpec {
     Map<String, List<String>> queryParams = new HashMap<>();
     queryParams.put("category", Arrays.asList(new String[] {"software design"}));
     when(ctx.queryParamMap()).thenReturn(queryParams);
-
     todoController.getTodos(ctx);
-
-    // Confirm that all the todos passed to `json` work for OHMNET.
     ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
     verify(ctx).json(argument.capture());
     for (Todo todo : argument.getValue()) {
       assertEquals("software design", todo.category);
     }
   }
+@Test
+  public void FilterByLimiting(){
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("limit", Arrays.asList(new String[] {"qqq"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    Throwable exception = Assertions.assertThrows(BadRequestResponse.class, () -> {
+      todoController.getTodos(ctx);
+    });
+    assertEquals(("Specified limit '" + "qqq"+ "' can't be parsed to an integer"), exception.getMessage());
+}
+@Test
+public void FilterByContains() throws IOException {
+  Map<String, List<String>> queryParams = new HashMap<>();
+  queryParams.put("contains", Arrays.asList(new String[] {"ex"}));
+  when(ctx.queryParamMap()).thenReturn(queryParams);
+  todoController.getTodos(ctx);
 
+  // Confirm that all the todos passed to `json` work for OHMNET.
+  ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+  verify(ctx).json(argument.capture());
+  for (Todo todo : argument.getValue()) {
+    assertTrue(todo.body.contains("ex"));
+  }
+}
+
+public void FilterBySorting(){
+  Map<String, List<String>> queryParams = new HashMap<>();
+  queryParams.put("orderBy", Arrays.asList(new String[] {"owner"}));
+  when(ctx.queryParamMap()).thenReturn(queryParams);
+  todoController.getTodos(ctx);
+  ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+
+}
 }

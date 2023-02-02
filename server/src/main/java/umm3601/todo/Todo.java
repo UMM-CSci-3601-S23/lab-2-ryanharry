@@ -1,7 +1,7 @@
 package umm3601.todo;
 
 public class Todo {
-  @SuppressWarnings({"OwnerName"})
+  @SuppressWarnings({"MemberName"})
   public String _id;
   public String owner;
   public Boolean status;
@@ -14,15 +14,15 @@ public class Todo {
     return this.owner;
   }
 
-  public Boolean getStatus(){
+  public Boolean getStatus() {
     return status;
   }
 
-  public String getBody(){
+  public String getBody() {
     return body;
   }
 
-  public String getCategory(){
+  public String getCategory() {
     return category;
   }
 }

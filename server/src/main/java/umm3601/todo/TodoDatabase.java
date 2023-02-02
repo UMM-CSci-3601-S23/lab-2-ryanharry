@@ -24,7 +24,7 @@ public class TodoDatabase {
     return Arrays.stream(allTodo).filter(x -> x._id.equals(id)).findFirst().orElse(null);
   }
 
-  public static Todo[] limiting_fun(Todo[] todos, int range){
+  public static Todo[] limiting(Todo[] todos, int range) {
     return Arrays.stream(todos).limit(range).toArray(Todo[]::new);
   }
 
@@ -51,38 +51,40 @@ public class TodoDatabase {
     }
 
     // Filter Category if defined
-    if (queryParams.containsKey("category")){
+    if (queryParams.containsKey("category")) {
       String targetCategory = queryParams.get("category").get(0);
       filteredTodos = filterTodosByCategory(filteredTodos, targetCategory);
     }
 
     // Filter Contains if defined
-    if (queryParams.containsKey("contains")){
+    if (queryParams.containsKey("contains")) {
       String targetContains = queryParams.get("contains").get(0);
       filteredTodos = filterTodosByContains(filteredTodos, targetContains);
     }
 
     // Filter Status if defined
-    if (queryParams.containsKey("status")){
-      String targetStatus= queryParams.get("status").get(0);
+    if (queryParams.containsKey("status")) {
+      String targetStatus = queryParams.get("status").get(0);
       filteredTodos = filterTodosByStatus(filteredTodos, targetStatus);
     }
 
     if (queryParams.containsKey("owner")) {
       String targetOwner = queryParams.get("owner").get(0);
-      filteredTodos = filterTodosByOwner(filteredTodos, targetOwner);}
+      filteredTodos = filterTodosByOwner(filteredTodos, targetOwner);
+    }
 
     if (queryParams.containsKey("orderBy")) {
       String targetSorting = queryParams.get("orderBy").get(0);
-      filteredTodos = filterTodosBySorting(filteredTodos, targetSorting);}
+      filteredTodos = filterTodosBySorting(filteredTodos, targetSorting);
+    }
 
     if (queryParams.containsKey("limit")) {
       String targetResult = queryParams.get("limit").get(0);
       try {
         int targetLimit = Integer.parseInt(targetResult);
-        filteredTodos = limiting_fun(filteredTodos, targetLimit);
+        filteredTodos = limiting(filteredTodos, targetLimit);
       } catch (NumberFormatException e) {
-        throw new BadRequestResponse("Specified limit '" + targetResult+ "' can't be parsed to an integer");
+        throw new BadRequestResponse("Specified limit '" + targetResult + "' can't be parsed to an integer");
       }
     }
     return filteredTodos;
@@ -102,13 +104,16 @@ public class TodoDatabase {
 
   /**
    * Get an array of all the users having the target company.
-   *
+   *    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("category", Arrays.asList(new String[] {"software design"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
    * @param todos         the list of users to filter by company
    * @param targetCategory  the target category to look for
    * @return an array of all the users from the given list that have the target
    *         company
    */
-  public Todo[] filterTodosByCategory(Todo[] todos, String targetCategory){
+  public Todo[] filterTodosByCategory(Todo[] todos, String targetCategory) {
     return Arrays.stream(todos).filter(x -> x.category.equals(targetCategory)).toArray(Todo[]::new);
   }
   /**
@@ -120,11 +125,10 @@ public class TodoDatabase {
    */
 
 
-  public Todo[] filterTodosByStatus(Todo[] todos, String targetStatus){
-    if(targetStatus.equals("incomplete")){
+  public Todo[] filterTodosByStatus(Todo[] todos, String targetStatus) {
+    if (targetStatus.equals("incomplete")) {
       return Arrays.stream(todos).filter(x -> x.status == false).toArray(Todo[]::new);
-    }
-    else{
+    } else {
       return Arrays.stream(todos).filter(x -> x.status == true).toArray(Todo[]::new);
     }
   }
@@ -150,24 +154,19 @@ public class TodoDatabase {
    */
 
   public Todo[] filterTodosBySorting(Todo[] todos, String content1) {
-    if (content1.equals("owner")){
+    if (content1.equals("owner")) {
       Arrays.sort(todos, Comparator.comparing(Todo::getOwner));
       return todos;
-    }
-    else if (content1.equals("status")){
+    } else if (content1.equals("status")) {
       return Arrays.stream(allTodo).sorted(Comparator.comparing(Todo::getStatus)).toArray(Todo[]::new);
-    }
-    else if (content1.equals("body")){
+    } else if (content1.equals("body")) {
       return Arrays.stream(allTodo).sorted(Comparator.comparing(Todo::getBody)).toArray(Todo[]::new);
-    }
-    else if (content1.equals("category")){
+    } else if (content1.equals("category")) {
       return Arrays.stream(allTodo).sorted(Comparator.comparing(Todo::getCategory)).toArray(Todo[]::new);
-    }
-    else{
+    } else {
       throw new BadRequestResponse("nothing to sort");
     }
   }
-
 }
 
 
