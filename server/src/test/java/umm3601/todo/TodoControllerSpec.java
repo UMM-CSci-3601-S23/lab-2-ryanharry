@@ -178,8 +178,8 @@ public void filterBySortingOwner() {
   todoController.getTodos(ctx);
   ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
   verify(ctx).json(argument.capture());
-  for (int i = 0; i<argument.getValue().length-1; i++ ){
-    assertTrue(argument.getValue()[i].compareTo(argument.getValue()[i+1])<1);
+  for (int i = 0; i < argument.getValue().length - 1; i++) {
+    assertTrue(argument.getValue()[i].compareTo(argument.getValue()[i + 1]) < 1);
   }
 }
 
@@ -191,8 +191,8 @@ public void filterBySortingOwner() {
     todoController.getTodos(ctx);
     ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
     verify(ctx).json(argument.capture());
-    for (int i = 0; i<argument.getValue().length-1; i++ ){
-      assertTrue(argument.getValue()[i].compareTo(argument.getValue()[i+1])<1);
+    for (int i = 0; i < argument.getValue().length - 1; i++) {
+      assertTrue(argument.getValue()[i].compareTo(argument.getValue()[i + 1]) < 1);
     }
   }
 
@@ -204,8 +204,8 @@ public void filterBySortingBody() {
   todoController.getTodos(ctx);
   ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
   verify(ctx).json(argument.capture());
-  for (int i = 0; i<argument.getValue().length-1; i++ ){
-    assertTrue(argument.getValue()[i].compareTo(argument.getValue()[i+1])<1);
+  for (int i = 0; i < argument.getValue().length - 1; i++) {
+    assertTrue(argument.getValue()[i].compareTo(argument.getValue()[i + 1]) < 1);
   }
 }
   @Test
@@ -216,8 +216,8 @@ public void filterBySortingBody() {
     todoController.getTodos(ctx);
     ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
     verify(ctx).json(argument.capture());
-    for (int i = 0; i<argument.getValue().length-1; i++ ){
-      assertTrue(argument.getValue()[i].compareTo(argument.getValue()[i+1])<1);
+    for (int i = 0; i < argument.getValue().length - 1; i++) {
+      assertTrue(argument.getValue()[i].compareTo(argument.getValue()[i + 1]) < 1);
     }
 
 }
