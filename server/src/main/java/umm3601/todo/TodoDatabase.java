@@ -141,7 +141,7 @@ public class TodoDatabase {
    * @return an array of all the users from the given list that have the target
    */
   public Todo[] filterTodosByContains(Todo[] todos, String content) {
-    return Arrays.stream(allTodo).filter(x -> x.body.contains(content)).toArray(Todo[]::new);
+    return Arrays.stream(todos).filter(x -> x.body.contains(content)).toArray(Todo[]::new);
   }
 
 /**
@@ -158,11 +158,11 @@ public class TodoDatabase {
       Arrays.sort(todos, Comparator.comparing(Todo::getOwner));
       return todos;
     } else if (content1.equals("status")) {
-      return Arrays.stream(allTodo).sorted(Comparator.comparing(Todo::getStatus)).toArray(Todo[]::new);
+      return Arrays.stream(todos).sorted(Comparator.comparing(Todo::getStatus)).toArray(Todo[]::new);
     } else if (content1.equals("body")) {
-      return Arrays.stream(allTodo).sorted(Comparator.comparing(Todo::getBody)).toArray(Todo[]::new);
+      return Arrays.stream(todos).sorted(Comparator.comparing(Todo::getBody)).toArray(Todo[]::new);
     } else if (content1.equals("category")) {
-      return Arrays.stream(allTodo).sorted(Comparator.comparing(Todo::getCategory)).toArray(Todo[]::new);
+      return Arrays.stream(todos).sorted(Comparator.comparing(Todo::getCategory)).toArray(Todo[]::new);
     } else {
       throw new BadRequestResponse("nothing to sort");
     }
